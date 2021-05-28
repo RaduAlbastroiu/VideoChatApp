@@ -27,7 +27,23 @@ function App() {
   const connectionRef = useRef();
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        myVideo.current.srcObject = stream;
+      });
+
+    socket.on('me', (id) => {
+      setMe(id);
+    });
+
+    socket.on('callUser', (data) => {
+      setReceivingCall(true);
+      setCaller(data.from);
+      setName(data.name);
+      setCallerSignal(data.signal);
+    });
   }, []);
 
   return <div className="App"></div>;
